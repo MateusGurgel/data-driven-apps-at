@@ -14,5 +14,6 @@ def get_selected_match(key: str):
     match_options = matches["match_date"].tolist()
     selected_match_name = st.selectbox("Selecione a data da partida", match_options, key=f"{key}:match")
     selected_match = matches[matches["match_date"] == selected_match_name].iloc[0]
+    print(selected_match["match_id"])
 
     return str(selected_match["match_id"].item())
