@@ -6,7 +6,7 @@ import streamlit as st
 API_LINK = config("API_HOST")
 
 st.cache_data()
-def get_player_profile(player_id: str, match_id: str) -> str:
+def get_player_profile(player_id: str, match_id: str) -> tuple:
 
     if not isinstance(player_id, str):
         raise ValueError("player_id must be a string")
@@ -28,5 +28,6 @@ def get_player_profile(player_id: str, match_id: str) -> str:
 
     response_json = response.json()
     summary = response_json["summary"]
+    events = response_json["events"]
 
-    return summary
+    return summary, events
