@@ -11,5 +11,5 @@ class ReactAgentCommand:
         self.model = model
 
     def execute(self, create_match_summary: GetAgentResponseDTO) -> AgentResponseDTO:
-        summary = self.model.generate_text(create_match_summary.model_dump())
+        summary = self.model.generate_text(f"Pergunta: {create_match_summary.question} Id da partida: {create_match_summary.match_id}")
         return AgentResponseDTO(summary=summary)
