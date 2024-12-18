@@ -1,0 +1,4 @@
+from modules.llm_models.gemini import gemini
+from modules.match_summarizer.match_summarizer_command import MatchSummaryCommand
+
+match_summarizer_command = MatchSummaryCommand(gemini)

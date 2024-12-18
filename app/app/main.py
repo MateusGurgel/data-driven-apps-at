@@ -1,10 +1,16 @@
 import pandas as pd
 import streamlit as st
+from langchain_community.callbacks import StreamlitCallbackHandler
 from matplotlib import pyplot as plt
 
-from api.get_event_summary import get_event_summary
-from api.get_narration import get_narration
-from api.get_player_profile import get_player_profile
+from modules.react_agent import react_agent_command
+from modules.react_agent.react_agent_dto import GetAgentResponseDTO
+from modules.game_narrator.game_narrator_dto import CreateGameNarrativeDTO
+from modules.game_narrator import game_narrator_command
+from modules.match_summarizer import match_summarizer_command
+from modules.match_summarizer.match_summarizer_dto import CreateMatchSummaryDTO
+from modules.player_profiler import player_profiler_command
+from modules.player_profiler.player_profiler_dto import CreatePlayerProfileDTO
 from components.match_player_selector import match_player_selector
 from components.match_selector import get_selected_match
 
@@ -15,10 +21,10 @@ def player_profile():
 
     st.write("Resumo das jogadas dos jogadores:")
     with st.spinner("Resumindo os eventos da partida..."):
-        summary, events = get_player_profile(player_id, match_id)
-        events_df = pd.DataFrame(events)
+        result = player_profiler_command.execute(CreatePlayerProfileDTO(player_id=player_id, match_id=match_id))
+        events_df = pd.DataFrame(result.events)
 
-        st.write(summary)
+        st.write(result.summary)
         st.write("📊 Dados sobre os Eventos:")
 
         # Calculate key statistics
@@ -64,7 +70,7 @@ def player_profile():
             plt.close()
 
         st.write("📊 Eventos Importantes:")
-        st.write(events)
+        st.write(result.events)
 
 
 def event_summary():
@@ -74,8 +80,18 @@ def event_summary():
 
     st.write("Resumo dos eventos da partida:")
     with st.spinner("Resumindo os eventos da partida..."):
-        summary = get_event_summary(selected_match)
-        st.write(summary)
+        result = match_summarizer_command.execute(CreateMatchSummaryDTO(match_id=selected_match))
+        st.write(result.summary)
+
+def event_agent():
+    st.header("🤖 Agente de Eventos")
+    selected_match = get_selected_match("AgentEvent")
+    if prompt := st.chat_input():
+        st.chat_message("user").write(prompt)
+        with st.chat_message("assistant"):
+            result = react_agent_command.execute(GetAgentResponseDTO(match_id=selected_match, question=prompt))
+            st.write(result.summary)
+
 
 def custom_narration():
     st.header("🎙️ Narração Personalizada")
@@ -88,13 +104,13 @@ def custom_narration():
 
     st.write("Resumo dos eventos da partida:")
     with st.spinner("Resumindo os eventos da partida..."):
-        narration = get_narration(selected_match, selected_narration_style)
-        st.write(narration)
+        result = game_narrator_command.execute(CreateGameNarrativeDTO(match_id=selected_match, narrative_style=selected_narration_style))
+        st.write(result.narration)
 
 def main():
     st.title("⚽ Análise de Partidas de Futebol")
 
-    tabs = st.tabs(["Perfil de Jogador", "Sumarização de Eventos", "Narração Personalizada"])
+    tabs = st.tabs(["Perfil de Jogador", "Sumarização de Eventos", "Narração Personalizada", "Agente de Eventos"])
 
     with tabs[0]:
         player_profile()
@@ -104,6 +120,9 @@ def main():
 
     with tabs[2]:
         custom_narration()
+
+    with tabs[3]:
+        event_agent()
 
 if __name__ == '__main__':
     main()

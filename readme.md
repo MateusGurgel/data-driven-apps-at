@@ -35,7 +35,7 @@ pip install -r requirements.txt
 Executação da api:
 
 ```bash
-cd apps/api
+cd apps/services
 uvicorn main:app --reload
 ```
 

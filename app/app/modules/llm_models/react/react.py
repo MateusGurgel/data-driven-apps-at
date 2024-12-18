@@ -2,12 +2,12 @@ from decouple import config
 from langchain import hub
 from langchain.agents import AgentExecutor, create_react_agent
 
-from api.modules.llm_models.llm_interface import LlmModel
+from modules.llm_models.llm_interface import LlmModel
 from langchain_google_genai import GoogleGenerativeAI
 
-from api.modules.llm_models.react.get_match_data_tool import get_match_data
-from api.modules.llm_models.react.get_player_data_tool import get_specific_player_data
-from api.modules.llm_models.react.get_passes import get_passes
+from modules.llm_models.react.get_match_data_tool import get_match_data
+from modules.llm_models.react.get_player_data_tool import get_specific_player_data
+from modules.llm_models.react.get_passes import get_passes
 
 
 class ReactAgent(LlmModel):
