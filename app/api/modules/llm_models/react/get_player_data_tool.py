@@ -38,8 +38,24 @@ def get_specific_player_data(query) -> str:
         # Fetch events for the specific match
         events = sb.events(match_id=match_id)
 
+        relevant_events = events[
+            [
+                "shot_outcome",
+                "team",
+                "shot_type",
+                "shot_technique",
+                "player",
+                "player_id",
+                "play_pattern",
+                "timestamp",
+                "period",
+                "foul_committed_card",
+                "pass_goal_assist"
+            ]
+        ]
+
         # Filter events for the specific player
-        player_events = events[events["player_id"] == player_id]
+        player_events = relevant_events[relevant_events["player_id"] == player_id]
 
         # Convert to JSON string to ensure serialization
         events_json = json.dumps(player_events.to_dict(orient="records"), ensure_ascii=False)

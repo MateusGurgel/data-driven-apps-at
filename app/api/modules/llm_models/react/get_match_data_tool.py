@@ -29,7 +29,8 @@ def get_match_data(match_id: int) -> str:
 
     try:
         events = sb.events(match_id=int(match_id))
-        relevant_events = events[
+        relevant_events = events[events["shot_outcome"].notna() | events["foul_committed_card"] | events["pass_goal_assist"].notna()]
+        relevant_events = relevant_events[
             [
                 "shot_outcome",
                 "team",
